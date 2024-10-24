@@ -25,7 +25,7 @@ TEST(Std, String_Empty)
   using Type = std::string;
   const Type val = {};
   auto str = serde_yaml::to_string(val).value();
-  EXPECT_STREQ(str.c_str(), "\n");
+  EXPECT_STREQ(str.c_str(), "''\n");
   auto de_val = serde_yaml::from_str<Type>(std::move(str)).value();
   EXPECT_EQ(de_val, val);
 }

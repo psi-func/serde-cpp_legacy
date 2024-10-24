@@ -1,3 +1,10 @@
+# Default compilation settings
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -ggdb -pg -fsanitize=undefined -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -Wall")
+
 # ##############################################################################
 # Dependencies
 # ##############################################################################

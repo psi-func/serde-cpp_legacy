@@ -140,7 +140,7 @@ public:
   }
 
   std::string emit() const {
-    return ryml::emitrs<std::string>(tree);
+    return ryml::emitrs_yaml<std::string>(tree);
   }
 
 private:
