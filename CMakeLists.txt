@@ -6,3 +6,7 @@ option(SERDE_BUILD_TEST "Build tests" OFF)
 option(SERDE_BUILD_YAML "Build yaml serializer" ON)
 
 add_subdirectory(lib)
+
+if(SERDE_BUILD_GENERATOR)
+  add_subdirectory(bin/serde_gen)
+endif()
