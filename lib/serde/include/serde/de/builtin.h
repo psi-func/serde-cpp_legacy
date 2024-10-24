@@ -142,7 +142,7 @@ inline void deserialize([[maybe_unused]] Deserializer&  de, [[maybe_unused]] cha
 }
 
 template<>
-inline void deserialize(Deserializer& de, const char* & cstr)
+inline void deserialize([[maybe_unused]] Deserializer& de, [[maybe_unused]] const char* & cstr)
 {
   throw std::logic_error("Cannot deserialize to const char*, it is const and length is unknown. Use char[N] or std::string");
 }
