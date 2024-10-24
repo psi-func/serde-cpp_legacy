@@ -75,7 +75,7 @@ public:
 
   void deserialize_cstr(char* val, size_t len) final {
     auto& curr = stack.top();
-    if (!curr.valid() || curr.is_seed() || !curr.get()) {
+    if (curr.invalid() || curr.is_seed() || !curr.get()) {
       std::cerr << "no scalar to extract" << std::endl;
       return; // TODO: mark error
     }
@@ -116,7 +116,7 @@ public:
 
   void deserialize_bytes(void* val, size_t len) final {
     auto& curr = stack.top();
-    if (!curr.valid() || curr.is_seed() || !curr.get()) {
+    if (curr.invalid() || curr.is_seed() || !curr.get()) {
       std::cerr << "no scalar to extract" << std::endl;
       return; // TODO: mark error
     }
@@ -149,7 +149,7 @@ public:
 
   void deserialize_length(size_t& len) final {
     auto& curr = stack.top();
-    if (!curr.valid() || curr.is_seed() || !curr.get()) {
+    if (curr.invalid() || curr.is_seed() || !curr.get()) {
       std::cerr << "not valid node to check length" << std::endl;
       return; // TODO: mark error
     }
@@ -174,7 +174,7 @@ public:
   // Optional //////////////////////////////////////////////////////////////////
   void deserialize_is_some(bool& val) final {
     auto& curr = stack.top();
-    if (!curr.valid() || curr.is_seed() || !curr.get()) {
+    if (curr.invalid() || curr.is_seed() || !curr.get()) {
       std::cerr << "not valid node to check for some" << std::endl;
       return; // TODO: mark error
     }
@@ -197,7 +197,7 @@ public:
 
   void deserialize_none() final {
     auto& curr = stack.top();
-    if (!curr.valid() || curr.is_seed() || !curr.get()) {
+    if (curr.invalid() || curr.is_seed() || !curr.get()) {
       std::cerr << "not valid node to extract none" << std::endl;
       return; // TODO: mark error
     }
@@ -292,7 +292,7 @@ public:
       return;
     }
     auto child = curr.find_sibling({key, std::strlen(key)});
-    if (!child.valid() || child.is_seed() || !child.get()) {
+    if (child.invalid() || child.is_seed() || !child.get()) {
       std::cerr << "key not found in map" << std::endl;
       return;
     }
