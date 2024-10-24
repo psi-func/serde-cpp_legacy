@@ -1,7 +1,15 @@
 #########################################################################################
 # Dependencies
 #########################################################################################
-find_package(cxxopts)
+include(FetchContent)
+
+FetchContent_Declare(cxxopts_project
+  GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+  GIT_TAG v3.2.1
+)
+
+FetchContent_MakeAvailable(cxxopts_project)
+
 # CppAST to parse and work with the C++ AST
 #set(CPPAST_BUILD_TOOL ON) # fetches cxxopts
 add_subdirectory(cppast)
