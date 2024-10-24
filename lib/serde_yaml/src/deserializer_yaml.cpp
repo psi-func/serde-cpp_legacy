@@ -32,7 +32,7 @@ public:
   template<typename T>
   void deserialize_scalar(T& val) {
     auto& curr = stack.top();
-    if (!curr.valid() || curr.is_seed() || !curr.get()) {
+    if (curr.invalid() || curr.is_seed() || !curr.get()) {
       std::cerr << "no scalar to extract" << std::endl;
       return; // TODO: mark error
     }
