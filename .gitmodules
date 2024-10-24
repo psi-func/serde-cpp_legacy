@@ -5,7 +5,7 @@
 [submodule "external/rapidyaml"]
 	path = external/rapidyaml
 	url = https://github.com/biojppm/rapidyaml.git
-[submodule "serde-cpp/serde_gen/cppast"]
-	path = serde-cpp/serde_gen/cppast
+[submodule "lib/serde_gen/cppast"]
+	path = lib/serde_gen/cppast
 	url = https://github.com/standardese/cppast.git
 	branch = v0.1.0
