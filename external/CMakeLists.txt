@@ -9,7 +9,13 @@ FetchContent_Declare(
 FetchContent_Declare(
   cppast
   GIT_REPOSITORY https://github.com/standardese/cppast.git
-  GIT_TAG v0.1.0
+  GIT_TAG 5329e377ab9b9ab9309e9641f3fcda04366a449a # 14 JUL 2024
+  OVERRIDE_FIND_PACKAGE)
+
+FetchContent_Declare(
+  cxxopts
+  GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+  GIT_TAG v3.2.1
   OVERRIDE_FIND_PACKAGE)
 
 FetchContent_Declare(
@@ -18,4 +24,4 @@ FetchContent_Declare(
   GIT_TAG v0.7.2
   OVERRIDE_FIND_PACKAGE)
 
-FetchContent_MakeAvailable(ryml cppast gtest)
+FetchContent_MakeAvailable(ryml cppast gtest cxxopts)

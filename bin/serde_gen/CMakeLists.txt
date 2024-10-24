@@ -30,10 +30,12 @@ install(FILES cmake/serde_cpp.cmake DESTINATION lib/cmake/serde_cpp)
 # ##############################################################################
 # Scripts
 # ##############################################################################
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/serde_gen/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(serde_cpp)
 
 # ##############################################################################
 # Tests
 # ##############################################################################
-add_subdirectory(test)
+if(SERDE_BUILD_TEST)
+  add_subdirectory(test)
+endif()

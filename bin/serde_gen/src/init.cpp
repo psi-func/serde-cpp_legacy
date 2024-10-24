@@ -103,15 +103,6 @@ static auto init_clang_compilation_config(const cxxopts::ParseResult& options)
     return clang_cfg;
 }
 
-static auto init_diagnostic_logger(const cxxopts::ParseResult& options)
-{
-    cppast::stderr_diagnostic_logger logger;
-    auto verbose = options.count("verbose");
-    if (verbose)
-        logger.set_verbose(true);
-    return logger;
-}
-
 static auto touch_file(const std::string& filename)
 {
     auto out_base_path = std::filesystem::path(filename).remove_filename();
@@ -131,7 +122,12 @@ static auto parse_source_to_ast(const cxxopts::ParseResult& options)
     const auto& source_filename = options["source"].as<std::string>();
     const auto fatal_errors = options.count("fatal_errors");
     auto clang_cfg = init_clang_compilation_config(options);
-    auto logger = init_diagnostic_logger(options);
+    cppast::stderr_diagnostic_logger logger;
+    auto verbose = options.count("verbose");
+    if (verbose) {
+        logger.set_verbose(true);
+    }
+
     auto src_ast = serde_gen::parse_file(clang_cfg, logger, source_filename, fatal_errors);
     return src_ast;
 }

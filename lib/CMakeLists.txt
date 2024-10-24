@@ -19,10 +19,6 @@ if(SERDE_BUILD_YAML)
   add_subdirectory(serde_yaml)
 endif()
 
-if(SERDE_BUILD_GENERATOR)
-  add_subdirectory(serde_gen)
-endif()
-
 # ##############################################################################
 # Package Configuration
 # ##############################################################################
