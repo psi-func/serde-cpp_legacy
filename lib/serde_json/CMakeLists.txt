@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(serde_json VERSION 0.1.0)
 
+option(SERDE_JSON_BUILD_TESTS "Build JSON serializer tests" ON)
+
 # ##############################################################################
 # Dependencies
 # ##############################################################################
@@ -10,9 +12,11 @@ find_package(glaze 3.6 REQUIRED)
 # ##############################################################################
 # serde_json
 # ##############################################################################
-set(SERDE_JSON_SOURCES src/test.cpp)
+set(SERDE_JSON_SOURCES src/deserializer_json.cpp src/serializer_json.cpp)
 
 add_library(serde_json STATIC ${SERDE_JSON_SOURCES})
+
+target_compile_features(serde_json PUBLIC cxx_std_23)
 
 target_include_directories(
   serde_json PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
