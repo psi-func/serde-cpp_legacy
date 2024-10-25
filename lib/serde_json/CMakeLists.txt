@@ -1,36 +1,36 @@
 cmake_minimum_required(VERSION 3.16)
-project(serde_yaml VERSION 0.1.0)
-
-option(SERDE_YAML_BUILD_TESTS "Build yaml test" ON)
+project(serde_json VERSION 0.1.0)
 
 # ##############################################################################
 # Dependencies
 # ##############################################################################
-# RapidYaml for parsing and emitting YAML
-find_package(ryml 0.5 REQUIRED)
+# Glaze for parsing and emitting json
+find_package(glaze 3.6 REQUIRED)
 
 # ##############################################################################
-# serde_yaml
+# serde_json
 # ##############################################################################
-add_library(serde_yaml STATIC)
-target_sources(serde_yaml PRIVATE src/serializer_yaml.cpp
-                                  src/deserializer_yaml.cpp)
+set(SERDE_JSON_SOURCES src/test.cpp)
+
+add_library(serde_json STATIC ${SERDE_JSON_SOURCES})
+
 target_include_directories(
-  serde_yaml PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  serde_json PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                     $<INSTALL_INTERFACE:include>)
+
 target_link_libraries(
-  serde_yaml
+  serde_json
   PUBLIC serde::serde
-  PRIVATE $<BUILD_INTERFACE:ryml::ryml>)
+  PRIVATE $<BUILD_INTERFACE:glaze::glaze>)
 
-add_library(serde::serde_yaml ALIAS serde_yaml)
+add_library(serde::serde_json ALIAS serde_json)
 
-install(TARGETS serde_yaml EXPORT serde_cppTargets)
-install(DIRECTORY include/serde_yaml DESTINATION include)
+install(TARGETS serde_json EXPORT serde_cppTargets)
+install(DIRECTORY include/serde_json DESTINATION include)
 
 # ##############################################################################
 # Tests
 # ##############################################################################
-if(SERDE_YAML_BUILD_TESTS)
+if(SERDE_JSON_BUILD_TESTS)
   add_subdirectory(test)
 endif()

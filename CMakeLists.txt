@@ -5,6 +5,7 @@ option(SERDE_BUILD_GENERATOR "Build serde generator" OFF)
 option(SERDE_BUILD_EXTERNAL "Build external libraries" OFF)
 option(SERDE_BUILD_TEST "Build tests" OFF)
 option(SERDE_BUILD_YAML "Build yaml serializer" ON)
+option(SERDE_BUILD_JSON "Build json serializer" ON)
 
 if(SERDE_BUILD_EXTERNAL)
   add_subdirectory(external)
