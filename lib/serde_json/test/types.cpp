@@ -5,119 +5,148 @@
 
 #include <vector>
 
+namespace serde {
+
+template<typename T>
+struct Serialize<T, std::enable_if_t<std::is_same_v<T, types::Student>>> {
+    static void serialize(Serializer& ser, const T& val)
+    {
+        ser.serialize_struct_begin();
+        ser.serialize_struct_field("name", val.name);
+        ser.serialize_struct_field("age", val.age);
+        ser.serialize_struct_end();
+    }
+};
+
+template<typename T>
+struct Deserialize<T, std::enable_if_t<std::is_same_v<T, types::Student>>> {
+    static void deserialize(Deserializer& de, T& val)
+    {
+        de.deserialize_struct_begin();
+        de.deserialize_struct_field("name", val.name);
+        de.deserialize_struct_field("age", val.age);
+        de.deserialize_struct_end();
+    }
+};
+
 template<>
-void serde::serialize(serde::Serializer& ser, const types::Number& number)
+void serialize(Serializer& ser, const types::Number& number)
 {
-  const char* cstr = "<null>";
-  switch (number) {
-    case types::Number::One: cstr = "One"; break;
-    case types::Number::Two: cstr = "Two"; break;
-    case types::Number::Three: cstr = "Three"; break;
-  }
-  ser.serialize(cstr);
+    const char* cstr = "<null>";
+    switch (number) {
+        case types::Number::One: cstr = "One"; break;
+        case types::Number::Two: cstr = "Two"; break;
+        case types::Number::Three: cstr = "Three"; break;
+    }
+    ser.serialize(cstr);
 }
 
 template<>
-void serde::deserialize(serde::Deserializer& de, types::Number& number)
+void deserialize(Deserializer& de, types::Number& number)
 {
-  char cstr[32] = {0};
-  de.deserialize(cstr);
-  std::string_view str(cstr);
-  if (str == "One") number = types::Number::One;
-  else if (str == "Two") number = types::Number::Two;
-  else if (str == "Three") number = types::Number::Three;
-  else return; // TODO: mark error
+    char cstr[32] = { 0 };
+    de.deserialize(cstr);
+    std::string_view str(cstr);
+    if (str == "One")
+        number = types::Number::One;
+    else if (str == "Two")
+        number = types::Number::Two;
+    else if (str == "Three")
+        number = types::Number::Three;
+    else
+        return;  // TODO: mark error
 }
 
 template<>
-void serde::serialize(serde::Serializer& ser, const types::Point& point)
+void serialize(Serializer& ser, const types::Point& point)
 {
-  ser.serialize_seq_begin();
+    ser.serialize_seq_begin();
 
     ser.serialize_seq_begin();
-      ser.serialize_i32(point.x);
-      ser.serialize_i32(point.y);
+    ser.serialize_i32(point.x);
+    ser.serialize_i32(point.y);
     ser.serialize_seq_end();
     ser.serialize_seq_begin();
-      ser.serialize_seq_begin();
-        ser.serialize_i32(point.x);
-        ser.serialize_i32(point.y);
-      ser.serialize_seq_end();
-      ser.serialize_seq_begin();
-        ser.serialize_i32(point.x);
-        ser.serialize_i32(point.y);
-      ser.serialize_seq_end();
+    ser.serialize_seq_begin();
+    ser.serialize_i32(point.x);
+    ser.serialize_i32(point.y);
+    ser.serialize_seq_end();
+    ser.serialize_seq_begin();
+    ser.serialize_i32(point.x);
+    ser.serialize_i32(point.y);
+    ser.serialize_seq_end();
     ser.serialize_seq_end();
 
-  ser.serialize_map_begin();
+    ser.serialize_map_begin();
     ser.serialize_map_entry("x", point.x);
     ser.serialize_map_entry("y", point.y);
 
     ser.serialize_map_key("z");
     ser.serialize_map_value_begin();
-      ser.serialize_seq_begin();
-        ser.serialize(point.x);
-        ser.serialize(point.y);
-      ser.serialize_seq_end();
+    ser.serialize_seq_begin();
+    ser.serialize(point.x);
+    ser.serialize(point.y);
+    ser.serialize_seq_end();
     ser.serialize_map_value_end();
-  ser.serialize_map_end();
+    ser.serialize_map_end();
 
-  ser.serialize_struct_begin();
+    ser.serialize_struct_begin();
     ser.serialize_struct_field_begin("r");
-      ser.serialize_seq_begin();
-        ser.serialize(point.x);
-        ser.serialize(point.y);
-      ser.serialize_seq_end();
+    ser.serialize_seq_begin();
+    ser.serialize(point.x);
+    ser.serialize(point.y);
+    ser.serialize_seq_end();
     ser.serialize_struct_field_end();
-  ser.serialize_struct_end();
+    ser.serialize_struct_end();
 
-  ser.serialize_struct_begin();
+    ser.serialize_struct_begin();
     ser.serialize_struct_field("t", point.x);
     ser.serialize_struct_field("s", point.x);
-  ser.serialize_struct_end();
+    ser.serialize_struct_end();
 
-  std::vector<types::Number> vec = {types::Number::One,
-                                     types::Number::Two,
-                                     types::Number::Three};
-  ser.serialize(vec);
+    std::vector<types::Number> vec = { types::Number::One, types::Number::Two,
+                                       types::Number::Three };
+    ser.serialize(vec);
 
-  ser.serialize_struct_begin();
+    ser.serialize_struct_begin();
     ser.serialize_struct_field_begin("w");
-      ser.serialize_map_begin();
-        ser.serialize_map_entry("a", point.x);
-        ser.serialize_map_entry("b", point.y);
-      ser.serialize_map_end();
+    ser.serialize_map_begin();
+    ser.serialize_map_entry("a", point.x);
+    ser.serialize_map_entry("b", point.y);
+    ser.serialize_map_end();
     ser.serialize_struct_field_end();
-  ser.serialize_struct_end();
+    ser.serialize_struct_end();
 
-  ser.serialize_seq_end();
+    ser.serialize_seq_end();
 }
 
 template<>
-void serde::deserialize(serde::Deserializer& de, types::Point& point)
+void deserialize(Deserializer& de, types::Point& point)
 {
-  //de.deserialize_seq_begin();
-    //de.deserialize(point.x);
-    //de.deserialize(point.y);
-    //de.deserialize(point.num);
-  //de.deserialize_seq_end();
+    // de.deserialize_seq_begin();
+    // de.deserialize(point.x);
+    // de.deserialize(point.y);
+    // de.deserialize(point.num);
+    // de.deserialize_seq_end();
 
-  //char key;
-  //de.deserialize_map_begin();
-    //de.deserialize_map_entry(key, point.x);
-    //de.deserialize_map_entry(key, point.y);
-    //de.deserialize_map_entry(key, point.num);
-  //de.deserialize_map_end();
+    // char key;
+    // de.deserialize_map_begin();
+    // de.deserialize_map_entry(key, point.x);
+    // de.deserialize_map_entry(key, point.y);
+    // de.deserialize_map_entry(key, point.num);
+    // de.deserialize_map_end();
 
-  //de.deserialize_map_begin();
-    //de.deserialize_map_entry_find("x", point.x);
-    //de.deserialize_map_entry_find("y", point.y);
-    //de.deserialize_map_entry_find("num", point.num);
-  //de.deserialize_map_end();
+    // de.deserialize_map_begin();
+    // de.deserialize_map_entry_find("x", point.x);
+    // de.deserialize_map_entry_find("y", point.y);
+    // de.deserialize_map_entry_find("num", point.num);
+    // de.deserialize_map_end();
 
-  de.deserialize_struct_begin();
+    de.deserialize_struct_begin();
     de.deserialize_struct_field("x", point.x);
     de.deserialize_struct_field("y", point.y);
     de.deserialize_struct_field("num", point.num);
-  de.deserialize_struct_end();
+    de.deserialize_struct_end();
 }
+
+}  // namespace serde
