@@ -1,9 +1,10 @@
 #include <serde_json/detail/ser_detail.hpp>
 
 #include <stack>
+#include <cctype>
+
 #include <glaze/glaze.hpp>
 #include <glaze/base64/base64.hpp>
-#include <cctype>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Serde JSON
@@ -48,11 +49,7 @@ class JsonSerializer final : public serde::Serializer {
     }
 
     // Optional //////////////////////////////////////////////////////////////////
-    void serialize_none() override
-    {
-        using namespace std::string_literals;
-        serialize_scalar(nullptr);
-    }
+    void serialize_none() override { serialize_scalar(nullptr); }
 
     // Sequence //////////////////////////////////////////////////////////////////
     void serialize_seq_begin() override
