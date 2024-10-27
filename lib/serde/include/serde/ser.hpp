@@ -3,23 +3,10 @@
 #include <expected>
 #include <concepts>
 
+#include "ser/builtin.hpp"
 #include "ser/serializer.hpp"
 
 namespace serde::ser {
-
-// namespace builtin {
-// template<typename T>
-// struct Serialize;
-//
-// template<>
-// struct Serialize<int> {
-//     template<typename S>
-//     static auto serialize(int a, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
-//     {
-//         return {};
-//     }
-// };
-// }  // namespace builtin
 
 namespace serialize_impl {
 
@@ -34,7 +21,6 @@ inline constexpr bool IsSerializable = requires(T&& t, S&& serializer) {
 };
 
 struct fn {
-
     template<typename T, typename S>
     constexpr auto operator()(T&& obj, S&& serializer) const
     // requires Serializer<S>
@@ -45,7 +31,8 @@ struct fn {
         }
         else {
             // default impl
-            return ::serde::ser::serialize(std::forward<T>(obj), std::forward<S>(serializer));
+            return serde::ser::builtin::serialize(std::forward<T>(obj),
+                                                  std::forward<S>(serializer));
         }
     }
 };
@@ -53,5 +40,72 @@ struct fn {
 }  // namespace serialize_impl
 
 inline constexpr serialize_impl::fn serialize;
+
+struct SerializerDef {
+
+    template<Serializer Self, typename T>
+    auto serialize(this Self&& self,
+                   const T& v) -> std::expected<typename Self::Ok, typename Self::Error>
+
+    {
+        return serde::ser::serialize(v);
+    }
+
+    template<Serializer Self, typename K>
+    auto serialize_map_key(this Self&& self,
+                           const K& key) -> std::expected<typename Self::Ok, typename Self::Error>
+    {
+        auto res = self.serialize_map_key_begin();
+        if (!res) {
+            return res;
+        }
+        res = serde::ser::serialize(key);
+        if (!res) {
+            return res;
+        }
+        return self.serialize_map_key_end();
+    }
+
+    template<Serializer Self, typename V>
+    auto serialize_map_value(this Self&& self, const V& value)
+        -> std::expected<typename Self::Ok, typename Self::Error>
+    {
+        auto res = self.serialize_map_value_begin();
+        if (!res) {
+            return res;
+        }
+        res = serde::ser::serialize(value);
+        if (!res) {
+            return res;
+        }
+        return self.serialize_map_value_end();
+    }
+
+    template<typename Self, typename K, typename V>
+    auto serialize_map_entry(this Self&& self, const K& key, const V& value)
+        -> std::expected<typename Self::Ok, typename Self::Error>
+    {
+        auto res = self.serialize_map_key(key);
+        if (!res) {
+            return res;
+        }
+        return self.serialize_map_value(value);
+    }
+
+    template<Serializer Self, typename V>
+    auto serialize_struct_field(this Self&& self, const char* name, const V& value)
+        -> std::expected<typename Self::Ok, typename Self::Error>
+    {
+        auto res = self.serialize_struct_field_begin(name);
+        if (!res) {
+            return res;
+        }
+        res = serde::ser::serialize(value);
+        if (!res) {
+            return res;
+        }
+        return self.serialize_struct_field_end();
+    }
+};
 
 }  // namespace serde::ser
