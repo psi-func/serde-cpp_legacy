@@ -24,4 +24,11 @@ FetchContent_Declare(
   GIT_TAG v0.7.2
   OVERRIDE_FIND_PACKAGE)
 
-FetchContent_MakeAvailable(ryml cppast gtest cxxopts)
+FetchContent_Declare(
+  glaze
+  GIT_REPOSITORY https://github.com/stephenberry/glaze.git
+  GIT_TAG v3.6.2
+  OVERRIDE_FIND_PACKAGE)
+
+
+FetchContent_MakeAvailable(ryml glaze cppast gtest cxxopts)

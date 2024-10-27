@@ -19,6 +19,10 @@ if(SERDE_BUILD_YAML)
   add_subdirectory(serde_yaml)
 endif()
 
+if(SERDE_BUILD_JSON)
+  add_subdirectory(serde_json)
+endif()
+
 # ##############################################################################
 # Package Configuration
 # ##############################################################################

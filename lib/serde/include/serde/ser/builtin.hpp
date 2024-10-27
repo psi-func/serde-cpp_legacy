@@ -7,7 +7,8 @@ namespace serde::ser {
 namespace detail {
 
 template<typename T, typename S>
-auto serialize_signed(T val, S&& serializer) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize_signed(T val, S&& serializer)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     if constexpr (sizeof(std::decay_t<T>) == 1) {
         return serializer.serialize_i8(val);
@@ -27,7 +28,8 @@ auto serialize_signed(T val, S&& serializer) -> std::expected<typename S::Ok, ty
 }
 
 template<typename T, typename S>
-auto serialize_unsigned(T val, S&& serializer) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize_unsigned(T val, S&& serializer)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     if constexpr (sizeof(std::decay_t<T>) == 1) {
         return serializer.serialize_u8(val);
@@ -51,11 +53,13 @@ auto serialize_unsigned(T val, S&& serializer) -> std::expected<typename S::Ok, 
 namespace builtin {
 
 // INTEGER TYPES ////////////////////////////////////////////////////////////////////
-#define SER_IML_SIGNED(type)                                                                   \
-    template<typename S>                                                                       \
-    static auto serialize(type a, S&& ser) -> std::expected<typename S::Ok, typename S::Error> \
-    {                                                                                          \
-        return detail::serialize_signed(a, std::forward<S>(ser));                              \
+#define SER_IML_SIGNED(type)                                                                \
+    template<typename S>                                                                    \
+    static auto serialize(type a,                                                           \
+                          S&& ser) -> std::expected<typename std::remove_cvref_t<S>::Ok,    \
+                                                    typename std::remove_cvref_t<S>::Error> \
+    {                                                                                       \
+        return detail::serialize_signed(a, std::forward<S>(ser));                           \
     }
 
 SER_IML_SIGNED(short)
@@ -64,11 +68,12 @@ SER_IML_SIGNED(long)
 SER_IML_SIGNED(long long)
 #undef SER_IML_SIGNED
 
-#define SER_IML_UNSIGNED(type)                                                          \
-    template<typename S>                                                                \
-    auto serialize(type a, S&& ser) -> std::expected<typename S::Ok, typename S::Error> \
-    {                                                                                   \
-        return detail::serialize_unsigned(a, std::forward<S>(ser));                     \
+#define SER_IML_UNSIGNED(type)                                                               \
+    template<typename S>                                                                     \
+    auto serialize(type a, S&& ser) -> std::expected<typename std::remove_cvref_t<S>::Ok,    \
+                                                     typename std::remove_cvref_t<S>::Error> \
+    {                                                                                        \
+        return detail::serialize_unsigned(a, std::forward<S>(ser));                          \
     }
 
 SER_IML_UNSIGNED(unsigned short)
@@ -79,46 +84,53 @@ SER_IML_UNSIGNED(unsigned long long)
 
 // BOOL TYPE ////////////////////////////////////////////////////////////////////
 template<typename S>
-auto serialize(bool b, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(bool b, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_bool(b);
 }
 
 // FLOAT TYPES ////////////////////////////////////////////////////////////////////
 template<typename S>
-auto serialize(double d, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(double d, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_double(d);
 }
 
 template<typename S>
-auto serialize(float b, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(float b, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_float(b);
 }
 
 // CHAR TYPES ////////////////////////////////////////////////////////////////////
 template<typename S>
-auto serialize(char b, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(char b, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_char(b);
 }
 
 template<typename S>
-auto serialize(signed char b, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(signed char b, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_char(b);
 }
 
 template<typename S>
-auto serialize(unsigned char b, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(unsigned char b, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_uchar(b);
 }
 
 // STR TYPES ////////////////////////////////////////////////////////////////////
 template<typename S>
-auto serialize(const char* b, S&& ser) -> std::expected<typename S::Ok, typename S::Error>
+auto serialize(const char* b, S&& ser)
+    -> std::expected<typename std::remove_cvref_t<S>::Ok, typename std::remove_cvref_t<S>::Error>
 {
     return ser.serialize_cstr(b);
 }

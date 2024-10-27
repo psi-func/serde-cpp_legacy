@@ -13,5 +13,3 @@ add_library(serde::serde ALIAS serde)
 install(TARGETS serde EXPORT serde_cppTargets)
 install(DIRECTORY include/serde DESTINATION include)
 
-add_subdirectory(test)
-
