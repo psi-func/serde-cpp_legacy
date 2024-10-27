@@ -2,6 +2,8 @@
 
 #include <expected>
 
+#include <serde/ser.hpp>
+
 namespace serde::ser {
 
 namespace detail {
@@ -51,12 +53,15 @@ auto serialize_unsigned(T val, S&& serializer) -> std::expected<typename S::Ok, 
 namespace builtin {
 
 // INTEGER TYPES ////////////////////////////////////////////////////////////////////
-#define SER_IML_SIGNED(type)                                                            \
-    template<typename S>                                                                \
-    auto serialize(type a, S&& ser) -> std::expected<typename S::Ok, typename S::Error> \
-    {                                                                                   \
-        return detail::serialize_signed(a, std::forward<S>(ser));                       \
-    }
+#define SER_IML_SIGNED(type)                                                                       \
+    template<>                                                                                     \
+    struct Serialize<type> {                                                                       \
+        template<typename S>                                                                       \
+        static auto serialize(type a, S&& ser) -> std::expected<typename S::Ok, typename S::Error> \
+        {                                                                                          \
+            return detail::serialize_signed(a, std::forward<S>(ser));                              \
+        }                                                                                          \
+    };
 
 SER_IML_SIGNED(short)
 SER_IML_SIGNED(int)
@@ -64,12 +69,15 @@ SER_IML_SIGNED(long)
 SER_IML_SIGNED(long long)
 #undef SER_IML_SIGNED
 
-#define SER_IML_UNSIGNED(type)                                                          \
-    template<typename S>                                                                \
-    auto serialize(type a, S&& ser) -> std::expected<typename S::Ok, typename S::Error> \
-    {                                                                                   \
-        return detail::serialize_unsigned(a, std::forward<S>(ser));                     \
-    }
+#define SER_IML_UNSIGNED(type)                                                              \
+    template<>                                                                              \
+    struct Serialize<type> {                                                                \
+        template<typename S>                                                                \
+        auto serialize(type a, S&& ser) -> std::expected<typename S::Ok, typename S::Error> \
+        {                                                                                   \
+            return detail::serialize_unsigned(a, std::forward<S>(ser));                     \
+        }                                                                                   \
+    };
 
 SER_IML_UNSIGNED(unsigned short)
 SER_IML_UNSIGNED(unsigned int)
@@ -129,7 +137,7 @@ auto serialize(T (*arr)[N], S&& ser) -> std::expected<typename S::Ok, typename S
     //  TODO: seq begin -> loop + serialize -> end (correct result)
     auto res_b = ser.serialize_seq_begin();
     for (auto i = 0UZ; i < N; ++i) {
-        auto res = builtin::serialize(arr[i], ser);
+        auto res = serde::ser::serialize(arr[i], ser);
     }
     return ser.serialize_seq_end();
 }

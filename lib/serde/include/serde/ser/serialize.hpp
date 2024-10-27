@@ -1,8 +1,20 @@
 #pragma once
 
-#include <cstddef>
+#include <utility>
+#include <concepts>
+#include <expected>
 
-namespace serde {
+namespace serde::ser {
+
+template<typename T, typename S>
+concept Serialize = requires(T&& t, S&& serializer) {
+    {
+        serialize(std::forward<T>(t), std::forward<S>(serializer))
+    } -> std::same_as<std::expected<typename S::Ok, typename S::Error>>;
+};
+
+#if 0
+
 
 // forward-declaration
 class Serializer;
@@ -71,6 +83,6 @@ inline void serialize(Serializer& ser, const T<U, N, M...>& val) {
 // Serialization for string literals, builtin implementation!
 template<size_t N>
 void serialize(Serializer& ser, const char (&val)[N]);
+#endif
 
-} // namespace serde
-
+}  // namespace serde::ser
