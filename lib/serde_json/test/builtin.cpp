@@ -198,7 +198,7 @@ struct Struct {
     template<typename S>
     friend auto serialize(const Struct& self, S&& ser)
     {
-        return serde::ser::serialize(self.val, ser);
+        return ser.serialize_cstr(self.val);
     }
     // void deserialize(serde::Deserializer& de) { de.deserialize(val); }
 };
