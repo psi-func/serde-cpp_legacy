@@ -17,15 +17,14 @@ template<typename T, typename S>
 inline constexpr bool IsSerializable = requires(T&& t, S&& serializer) {
     {
         serialize(std::forward<T>(t), std::forward<S>(serializer))
-    } -> std::same_as<std::expected<std::remove_cvref_t<typename S::Ok>,
-                                    std::remove_cvref_t<typename S::Error>>>;
+    } -> std::same_as<std::expected<typename std::remove_cvref_t<S>::Ok,
+                                    typename std::remove_cvref_t<S>::Error>>;
 };
 
 struct fn {
     template<typename T, typename S>
     constexpr auto operator()(T&& obj, S&& serializer) const
         requires Serializer<std::remove_cvref_t<S>>
-    // requires Serializer<S>
     {
         if constexpr (IsSerializable<T, S>) {
             // ADL

@@ -196,11 +196,9 @@ struct Struct {
     char val[10] = "Wiggle";
 
     template<typename S>
-    friend auto serialize(Struct self,
-                          S&& ser) -> std::expected<std::remove_cvref_t<typename S::Ok>,
-                                                    std::remove_cvref_t<typename S::Error>> const
+    friend auto serialize(const Struct& self, S&& ser)
     {
-        serde::ser::serialize(self.val, ser);
+        return serde::ser::serialize(self.val, ser);
     }
     // void deserialize(serde::Deserializer& de) { de.deserialize(val); }
 };
@@ -218,11 +216,9 @@ struct StructBytes {
     uint8_t val[10] = { 0xde, 0xad, 0xbe, 0xef, 0x00, 0x22, 0x33, 0x44, 0x56, 0x98 };
 
     template<typename S>
-    friend auto serialize(StructBytes self,
-                          S&& ser) -> std::expected<std::remove_cvref_t<typename S::Ok>,
-                                                    std::remove_cvref_t<typename S::Error>> const
+    friend auto serialize(const StructBytes& self, S&& ser)
     {
-        return serde::ser::serialize(self.val, ser);
+        return ser.serialize_bytes(self.val, sizeof(self.val));
     }
     // void deserialize(serde::Deserializer& de) { de.deserialize_bytes(val, sizeof(val)); }
 };
