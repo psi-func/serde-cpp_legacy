@@ -192,32 +192,46 @@ TEST(Builtin, CharPtr)
     // EXPECT_THROW(std::ignore = serde_json::from_str<char*>(std::move(str)), std::logic_error);
 }
 
-#if 0
+struct Struct {
+    char val[10] = "Wiggle";
+
+    template<typename S>
+    friend auto serialize(Struct self,
+                          S&& ser) -> std::expected<std::remove_cvref_t<typename S::Ok>,
+                                                    std::remove_cvref_t<typename S::Error>> const
+    {
+        serde::ser::serialize(self.val, ser);
+    }
+    // void deserialize(serde::Deserializer& de) { de.deserialize(val); }
+};
 
 TEST(Builtin, LiteralCharArray)
 {
-    struct Struct {
-        char val[10] = "Wiggle";
-        void serialize(serde::Serializer& ser) const { ser.serialize(val); }
-        void deserialize(serde::Deserializer& de) { de.deserialize(val); }
-    } val;
+    Struct val;
     auto str = serde_json::to_string(val).value();
     EXPECT_STREQ(str.c_str(), "\"Wiggle\"");
     // auto de_val = serde_json::from_str<Struct>(std::move(str)).value();
     // EXPECT_STREQ(de_val.val, "Wiggle");
 }
 
+struct StructBytes {
+    uint8_t val[10] = { 0xde, 0xad, 0xbe, 0xef, 0x00, 0x22, 0x33, 0x44, 0x56, 0x98 };
+
+    template<typename S>
+    friend auto serialize(StructBytes self,
+                          S&& ser) -> std::expected<std::remove_cvref_t<typename S::Ok>,
+                                                    std::remove_cvref_t<typename S::Error>> const
+    {
+        return serde::ser::serialize(self.val, ser);
+    }
+    // void deserialize(serde::Deserializer& de) { de.deserialize_bytes(val, sizeof(val)); }
+};
+
 TEST(Builtin, Bytes)  // base64 encoded
 {
-    struct Struct {
-        uint8_t val[10] = { 0xde, 0xad, 0xbe, 0xef, 0x00, 0x22, 0x33, 0x44, 0x56, 0x98 };
-        void serialize(serde::Serializer& ser) const { ser.serialize_bytes(val, sizeof(val)); }
-        void deserialize(serde::Deserializer& de) { de.deserialize_bytes(val, sizeof(val)); }
-    } val;
+    StructBytes val;
     auto str = serde_json::to_string(val).value();
     EXPECT_STREQ(str.c_str(), "\"3q2+7wAiM0RWmA==\"");
     // auto de_val = serde_json::from_str<Struct>(std::move(str)).value();
     // EXPECT_TRUE(0 == memcmp(val.val, de_val.val, sizeof(Struct::val)));
 }
-
-#endif
